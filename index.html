@@ -214,6 +214,13 @@
       transition: opacity 0.2s;
     }
     .pay-btn:active { opacity: 0.8; }
+    .pay-btn.disabled {
+      background: #ccc;
+      color: #666;
+      cursor: not-allowed;
+      pointer-events: none;
+      opacity: 0.6;
+    }
     .pay-note {
       font-size: 0.75rem;
       color: var(--muted);
@@ -724,6 +731,77 @@
   });
   updatePrice();
 
+  /* ── Payment button validation ──────────────────────── */
+  function validateFormForPayment() {
+    var fullName = document.getElementById('fullName').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var visitDateTime = document.getElementById('visitDateTime').value;
+    var regCheck = document.getElementById('acceptedRegulamin').checked;
+    var monCheck = document.getElementById('acceptedMonitoring').checked;
+    
+    var isValid = fullName && phone && email && visitDateTime && regCheck && monCheck && hasSig;
+    
+    if (isValid) {
+      payLink.classList.remove('disabled');
+    } else {
+      payLink.classList.add('disabled');
+    }
+  }
+  
+  // Перевіряємо при зміні будь-якого поля
+  document.getElementById('fullName').addEventListener('input', validateFormForPayment);
+  document.getElementById('phone').addEventListener('input', validateFormForPayment);
+  document.getElementById('email').addEventListener('input', validateFormForPayment);
+  document.getElementById('visitDateTime').addEventListener('change', validateFormForPayment);
+  document.getElementById('acceptedRegulamin').addEventListener('change', validateFormForPayment);
+  document.getElementById('acceptedMonitoring').addEventListener('change', validateFormForPayment);
+  
+  // Початкова перевірка
+  validateFormForPayment();
+
+  /* ── Auto-submit after payment ──────────────────────── */
+  // Відстежуємо клік на кнопку оплати
+  payLink.addEventListener('click', function(e) {
+    if (!payLink.classList.contains('disabled')) {
+      // Зберігаємо прапорець що користувач пішов на оплату
+      localStorage.setItem('salon_she_payment_pending', 'true');
+      localStorage.setItem('salon_she_form_data', JSON.stringify({
+        fullName: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+        visitDateTime: document.getElementById('visitDateTime').value,
+        hours: hoursInput.value,
+        idDoc: document.getElementById('idDoc').value,
+        nip: nipInput.value,
+        invoiceRequested: invoiceCheck.checked,
+        acceptedRegulamin: document.getElementById('acceptedRegulamin').checked,
+        acceptedMonitoring: document.getElementById('acceptedMonitoring').checked,
+        signatureBase64: canvas.toDataURL('image/png')
+      }));
+    }
+  });
+
+  // Перевіряємо чи користувач повернувся після оплати
+  window.addEventListener('focus', function() {
+    if (localStorage.getItem('salon_she_payment_pending') === 'true') {
+      // Даємо користувачу 2 секунди після повернення, потім автоматично відправляємо
+      setTimeout(function() {
+        if (localStorage.getItem('salon_she_payment_pending') === 'true') {
+          // Відновлюємо дані форми
+          var savedData = JSON.parse(localStorage.getItem('salon_she_form_data') || '{}');
+          if (savedData.fullName) {
+            // Автоматично відправляємо форму
+            localStorage.removeItem('salon_she_payment_pending');
+            localStorage.removeItem('salon_she_form_data');
+            document.getElementById('mainForm').dispatchEvent(new Event('submit'));
+          }
+        }
+      }, 2000);
+    }
+  });
+
   /* ── NIP toggle ─────────────────────────────────────── */
   var invoiceCheck = document.getElementById('invoiceRequested');
   var nipRow       = document.getElementById('nip-row');
@@ -794,6 +872,7 @@
     hasSig = true;
     clearErr(null, 'err-sig');
     sigWrap.classList.remove('error');
+    validateFormForPayment(); // Перевіряємо чи можна активувати кнопку оплати
   }
   function draw(e) {
     if (!drawing) return;

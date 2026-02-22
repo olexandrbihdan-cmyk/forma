@@ -6,8 +6,8 @@
 
 // ── Замініть ці значення на свої ────────────────────────────────
 var TEMPLATE_ID  = '1QcFYuWKuBGCavz3BgdeeCh0jZkIQPdLIyXK25VK-M8Y'; // Google Docs шаблон
-var FOLDER_ID    = '1fojOa6FFAN7yepbfBVAk4JwC4fpdob_T';              // Папка для PDF
-var SHEET_ID     = '1_jAqCKaG4T1MzlRKhi8y_sYSa5glQ00tm7FniGWunhA';   // !! ОБОВ'ЯЗКОВО: вставте ID вашої Google Таблиці (з URL: /spreadsheets/d/XXXXXX/edit)
+var FOLDER_ID    = '1LJ2gIfaw_lnPPKe4Htcvc7K5aKH0Sz0n';              // Папка для PDF
+var SHEET_ID     = '1u7rGVPO6UC3-pdWDc2px6pEOSqiurcw6tijOYd4BAnI';   // !! ОБОВ'ЯЗКОВО: вставте ID вашої Google Таблиці (з URL: /spreadsheets/d/XXXXXX/edit)
 var SHEET_NAME   = 'HourlyAccess';                                    // Назва аркушу
 
 // ── Платіжний режим ──────────────────────────────────────────────
@@ -134,15 +134,17 @@ function validatePayload(p) {
 function generateAndSendPdf(payload) {
   var templateFile = DriveApp.getFileById(TEMPLATE_ID);
   var folder       = DriveApp.getFolderById(FOLDER_ID);
-  var docName      = 'Umowa_' + payload.fullName.trim();
+  
+  // Форматуємо дату візиту
+  var visitFormatted = formatVisitDate(payload.visitDateTime);
+  
+  // Формуємо назву файлу: YYYY.MM.DD_HH.mm_FullName
+  var docName = formatFileNameFromVisit(payload.visitDateTime, payload.fullName);
 
   // Копіюємо шаблон
   var copy = templateFile.makeCopy(docName, folder);
   var doc  = DocumentApp.openById(copy.getId());
   var body = doc.getBody();
-
-  // Форматуємо дату візиту
-  var visitFormatted = formatVisitDate(payload.visitDateTime);
 
   // Замінюємо плейсхолдери текстом
   var textMap = {
@@ -416,12 +418,41 @@ function authorizeUrlFetch() {
 //  Утиліти
 // ════════════════════════════════════════════════════════════════
 function formatVisitDate(dtString) {
+  // Фронтенд вже відправляє дату в форматі DD.MM.YYYY HH:mm
+  // Просто повертаємо як є
   if (!dtString) return '';
+  return dtString;
+}
+
+function formatFileNameFromVisit(visitDateTime, fullName) {
+  // visitDateTime приходить у форматі DD.MM.YYYY HH:mm
+  // Потрібно перетворити на YYYY.MM.DD_HH.mm_FullName
+  if (!visitDateTime || !fullName) {
+    return 'Umowa_' + (fullName || 'Unknown').trim();
+  }
+  
   try {
-    var d = new Date(dtString);
-    return Utilities.formatDate(d, 'GMT+2', 'dd.MM.yyyy HH:mm');
+    // Парсимо DD.MM.YYYY HH:mm
+    var parts = visitDateTime.split(' ');
+    if (parts.length !== 2) throw new Error('Invalid format');
+    
+    var dateParts = parts[0].split('.');
+    var timeParts = parts[1].split(':');
+    
+    if (dateParts.length !== 3 || timeParts.length !== 2) throw new Error('Invalid format');
+    
+    var dd = dateParts[0];
+    var mm = dateParts[1];
+    var yyyy = dateParts[2];
+    var hh = timeParts[0];
+    var min = timeParts[1];
+    
+    // Формуємо YYYY.MM.DD_HH.mm_FullName
+    var cleanName = fullName.trim().replace(/[^a-zA-Z0-9а-яА-ЯіІїЇєЄ\s]/g, '').replace(/\s+/g, '_');
+    return yyyy + '.' + mm + '.' + dd + '_' + hh + '.' + min + '_' + cleanName;
   } catch (e) {
-    return dtString;
+    // Якщо не вдалося парсити, повертаємо стандартну назву
+    return 'Umowa_' + fullName.trim();
   }
 }
 
