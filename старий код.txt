@@ -1,0 +1,57 @@
+function onFormSubmit(e) {
+  // 1. ID ваших файлів (замініть на свої з посилань в браузері)
+  const templateId = '1QcFYuWKuBGCavz3BgdeeCh0jZkIQPdLIyXK25VK-M8Y'; 
+  const folderId = '1fojOa6FFAN7yepbfBVAk4JwC4fpdob_T'; 
+
+  // 2. Отримуємо дані з форми
+  const responses = e.namedValues;
+  
+  // ПЕРЕВІРКА: Переконайтеся, що назва в дужках точно як у формі (image_f44683.png)
+  // Якщо у формі є поле для Email, впишіть його назву нижче:
+  const userEmail = responses['Email'] ? responses['Email'][0] : null; 
+
+  const dataMap = {
+    "{{nazwa}}": responses['Imię i nazwisko/Nazwa firmy'] ? responses['Imię i nazwisko/Nazwa firmy'][0] : "",
+    "{{adres}}": responses['twój adres zamieszkania (lub rozliczenie podatkowe)'] ? responses['twój adres zamieszkania (lub rozliczenie podatkowe)'][0] : "",
+    "{{pesel}}": responses['PESEL'] ? responses['PESEL'][0] : "",
+    "{{dokument}}": responses['Nr dokumentu tożsamości'] ? responses['Nr dokumentu tożsamości'][0] : "",
+    "{{Email}}": responses['Email'] ? responses['Email'][0] : "",
+    "{{nip}}": responses['NIP (jeśli potrzebujesz fakturę)'] && responses['NIP (jeśli potrzebujesz fakturę)'][0] ? responses['NIP (jeśli potrzebujesz fakturę)'][0] : "",
+    "{{data}}": Utilities.formatDate(new Date(), "GMT+2", "dd.MM.yyyy")
+  };
+
+  try {
+    // 3. Створення документа
+    const templateFile = DriveApp.getFileById(templateId);
+    const folder = DriveApp.getFolderById(folderId);
+    const copy = templateFile.makeCopy(`Умова - ${dataMap["{{nazwa}}"]}`, folder);
+    const doc = DocumentApp.openById(copy.getId());
+    const body = doc.getBody();
+
+    for (let tag in dataMap) {
+      body.replaceText(tag, dataMap[tag]);
+    }
+    doc.saveAndClose();
+
+    // 4. Генерація PDF
+    const pdfBlob = copy.getAs(MimeType.PDF);
+    pdfBlob.setName(`Umowa_${dataMap["{{nazwa}}"]}.pdf`);
+    folder.createFile(pdfBlob);
+
+    // Видаляємо тимчасовий Google Doc
+    copy.setTrashed(true);
+
+    // 5. НАДСИЛАННЯ НА EMAIL
+    if (userEmail) {
+      MailApp.sendEmail({
+        to: userEmail,
+        subject: "Ваш договір про користування інфраструктурою",
+        body: `Доброго дня! \n\nДякуємо за заповнення форми. Ваш договір (PDF) додано до цього листа. \n\nЗ повагою, Albina Boichuk`,
+        attachments: [pdfBlob]
+      });
+    }
+
+  } catch (error) {
+    Logger.log("Помилка: " + error.toString());
+  }
+}

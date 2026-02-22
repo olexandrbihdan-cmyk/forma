@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#b5845a">
+  <title>Salon SHE — Реєстрація</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f5f2;
+      --card: #ffffff;
+      --accent: #b5845a;
+      --accent-dark: #8c5e38;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --border: #d9d0c7;
+      --error: #c0392b;
+      --success: #27ae60;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 16px 16px 40px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 24px 0 20px;
+    }
+    .header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    label .req { color: var(--error); margin-left: 2px; }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="datetime-local"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      color: var(--text);
+      background: #fff;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+    input.error, select.error, textarea.error {
+      border-color: var(--error);
+    }
+
+    /* Hours stepper */
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .stepper button {
+      width: 52px;
+      height: 50px;
+      background: var(--bg);
+      border: none;
+      font-size: 1.4rem;
+      color: var(--accent-dark);
+      cursor: pointer;
+      flex-shrink: 0;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    .stepper button:active { background: var(--border); }
+    .stepper input {
+      flex: 1;
+      border: none;
+      border-left: 1.5px solid var(--border);
+      border-right: 1.5px solid var(--border);
+      border-radius: 0;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 13px 4px;
+    }
+    .stepper input:focus { border-color: var(--border); }
+
+    /* Price block */
+    .price-block {
+      background: linear-gradient(135deg, #fdf6ee, #fbebd8);
+      border: 1.5px solid #e8c99a;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .price-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .price-amount {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-dark);
+      line-height: 1.1;
+    }
+    .price-amount span { font-size: 1.1rem; font-weight: 600; }
+    .pay-btn {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 13px;
+      background: #1a1a2e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.2s;
+    }
+    .pay-btn:active { opacity: 0.8; }
+    .pay-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* NIP conditional */
+    #nip-row { display: none; }
+
+    /* Checkboxes */
+    .check-field {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .check-field:last-child { margin-bottom: 0; }
+    .check-field input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      margin-top: 1px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .check-field label {
+      font-size: 0.88rem;
+      font-weight: 400;
+      color: var(--text);
+      margin: 0;
+      cursor: pointer;
+    }
+    .check-field label a {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+    .check-field.error-check label { color: var(--error); }
+
+    /* Signature */
+    .sig-wrap {
+      position: relative;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fafafa;
+    }
+    .sig-wrap.error { border-color: var(--error); }
+    #sigCanvas {
+      display: block;
+      width: 100%;
+      cursor: crosshair;
+    }
+    .sig-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ccc;
+      font-size: 0.85rem;
+      pointer-events: none;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .sig-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+    .btn-clear {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn-clear:active { background: var(--bg); }
+
+    /* Submit */
+    .btn-submit {
+      display: block;
+      width: 100%;
+      padding: 17px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.2s, opacity 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .btn-submit:active { background: var(--accent-dark); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Messages */
+    .msg {
+      display: none;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .msg.success {
+      background: #eafaf1;
+      border: 1.5px solid #a9dfbf;
+      color: #1e8449;
+    }
+    .msg.error-msg {
+      background: #fdedec;
+      border: 1.5px solid #f1948a;
+      color: var(--error);
+    }
+    .msg.pending {
+      background: #fef9e7;
+      border: 1.5px solid #f9e79f;
+      color: #7d6608;
+    }
+
+    .field-error {
+      font-size: 0.78rem;
+      color: var(--error);
+      margin-top: 4px;
+      display: none;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (min-width: 540px) {
+      .container { padding: 24px 24px 60px; }
+      .card { padding: 24px 20px; }
+    }
+
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Salon SHE</h1>
+    <p>Реєстрація доступу до локалу</p>
+  </div>
+
+  <!-- Status messages -->
+  <div id="msg-success" class="msg success"></div>
+  <div id="msg-error" class="msg error-msg"></div>
+  <div id="msg-pending" class="msg pending"></div>
+
+  <form id="mainForm" novalidate>
+
+    <!-- Personal data -->
+    <div class="card">
+      <div class="section-title">Особисті дані</div>
+
+      <div class="field">
+        <label for="fullName">Ім'я та прізвище <span class="req">*</span></label>
+        <input type="text" id="fullName" name="fullName" placeholder="Ім'я Прізвище" autocomplete="name" required>
+        <div class="field-error" id="err-fullName">Введіть ім'я та прізвище</div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Номер телефону <span class="req">*</span></label>
+        <input type="tel" id="phone" name="phone" placeholder="+48 000 000 000" autocomplete="tel" required>
+        <div class="field-error" id="err-phone">Введіть номер телефону</div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email <span class="req">*</span></label>
+        <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" required>
+        <div class="field-error" id="err-email">Введіть коректний email</div>
+      </div>
+
+      <div class="field">
+        <label for="address">Адреса <span style="color:var(--muted);font-weight:400">(необов'язково)</span></label>
+        <input type="text" id="address" name="address" placeholder="Вулиця, місто" autocomplete="street-address">
+      </div>
+    </div>
+
+    <!-- Visit details -->
+    <div class="card">
+      <div class="section-title">Деталі візиту</div>
+
+      <div class="field">
+        <label for="visitDateTime">Дата і час візиту <span class="req">*</span></label>
+        <input type="datetime-local" id="visitDateTime" name="visitDateTime" required>
+        <div class="field-error" id="err-visitDateTime">Оберіть дату і час</div>
+      </div>
+
+      <div class="field">
+        <label for="hours">Кількість годин <span class="req">*</span></label>
+        <div class="stepper">
+          <button type="button" id="btn-minus" aria-label="Зменшити">−</button>
+          <input type="number" id="hours" name="hours" value="1" min="1" max="12" readonly>
+          <button type="button" id="btn-plus" aria-label="Збільшити">+</button>
+        </div>
+        <div class="field-error" id="err-hours">Оберіть кількість годин (1–12)</div>
+      </div>
+    </div>
+
+    <!-- Price block -->
+    <div class="price-block">
+      <div class="price-label">Do zapłaty</div>
+      <div class="price-amount" id="priceDisplay">30 <span>PLN</span></div>
+      <a id="payLink" href="#" target="_blank" rel="noopener noreferrer" class="pay-btn">
+        💳 Оплатити через Revolut
+      </a>
+      <div class="pay-note">Оплата необов'язкова в тестовому режимі</div>
+    </div>
+
+    <!-- Documents -->
+    <div class="card">
+      <div class="section-title">Документи</div>
+
+      <div class="field">
+        <label for="idDoc">Номер документу <span style="color:var(--muted);font-weight:400">(необов'язково)</span></label>
+        <input type="text" id="idDoc" name="idDoc" placeholder="Серія та номер">
+      </div>
+
+      <div class="field">
+        <div class="check-field" style="margin-bottom:10px">
+          <input type="checkbox" id="invoiceRequested" name="invoiceRequested">
+          <label for="invoiceRequested">Потрібна фактура (faktura VAT)</label>
+        </div>
+      </div>
+
+      <div class="field" id="nip-row">
+        <label for="nip">NIP <span class="req">*</span></label>
+        <input type="text" id="nip" name="nip" placeholder="000-000-00-00">
+        <div class="field-error" id="err-nip">NIP обов'язковий при запиті фактури</div>
+      </div>
+    </div>
+
+    <!-- Agreements -->
+    <div class="card">
+      <div class="section-title">Згоди</div>
+
+      <div class="check-field" id="wrap-regulamin">
+        <input type="checkbox" id="acceptedRegulamin" name="acceptedRegulamin" required>
+        <label for="acceptedRegulamin">
+          Я ознайомився/ознайомилась і приймаю
+          <a href="https://docs.google.com/document/d/1MCnRjH4PRL5NJkY6aZT0Nzeu8eBb2vVBOlFkzqlPT9M/edit?tab=t.0#heading=h.p4g7v9uedlgh"
+             target="_blank" rel="noopener noreferrer">REGULAMIN</a>
+          <span class="req">*</span>
+        </label>
+      </div>
+
+      <div class="check-field" id="wrap-monitoring" style="margin-top:12px">
+        <input type="checkbox" id="acceptedMonitoring" name="acceptedMonitoring" required>
+        <label for="acceptedMonitoring">
+          Підтверджую, що локал знаходиться під відеоспостереженням (крім туалету) і я погоджуюсь
+          <span class="req">*</span>
+        </label>
+      </div>
+
+      <div class="field-error" id="err-checks" style="display:none;margin-top:8px">
+        Необхідно прийняти обидві згоди
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div class="card">
+      <div class="section-title">Підпис</div>
+      <div class="sig-wrap" id="sigWrap">
+        <canvas id="sigCanvas" height="160"></canvas>
+        <div class="sig-hint" id="sigHint">Підпишіть тут пальцем</div>
+      </div>
+      <div class="field-error" id="err-sig" style="margin-top:6px">Підпис обов'язковий</div>
+      <div class="sig-actions">
+        <button type="button" class="btn-clear" id="btnClear">Очистити підпис</button>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn-submit" id="btnSubmit">
+      Відправити / Zatwierdź
+    </button>
+
+  </form>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── ВАЖЛИВО: вставте сюди URL вашого Apps Script doPost ── */
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVQ70hrV6lH-bi9wM8gS2Ivs_j5bJxL1XXEpNLtPqu0zdgMnj9X7K77JYEfIB7VOw/exec';
+
+  /* ── Constants ─────────────────────────────────────── */
+  var RATE_PER_HOUR    = 30;
+  var REVOLUT_BASE     = 'https://revolut.me/bynya94';
+  var PAYMENT_REQUIRED = false; // flip to true when live
+
+  /* ── Price & Revolut link ───────────────────────────── */
+  var hoursInput   = document.getElementById('hours');
+  var priceDisplay = document.getElementById('priceDisplay');
+  var payLink      = document.getElementById('payLink');
+
+  function updatePrice() {
+    var h     = parseInt(hoursInput.value, 10) || 1;
+    var total = h * RATE_PER_HOUR;
+    priceDisplay.innerHTML = total + ' <span>PLN</span>';
+    var revolutUrl = REVOLUT_BASE + '?currency=PLN&amount=' + (total * 100);
+    payLink.href = revolutUrl;
+  }
+
+  document.getElementById('btn-minus').addEventListener('click', function () {
+    var v = parseInt(hoursInput.value, 10);
+    if (v > 1) { hoursInput.value = v - 1; updatePrice(); }
+  });
+  document.getElementById('btn-plus').addEventListener('click', function () {
+    var v = parseInt(hoursInput.value, 10);
+    if (v < 12) { hoursInput.value = v + 1; updatePrice(); }
+  });
+  updatePrice();
+
+  /* ── NIP toggle ─────────────────────────────────────── */
+  var invoiceCheck = document.getElementById('invoiceRequested');
+  var nipRow       = document.getElementById('nip-row');
+  var nipInput     = document.getElementById('nip');
+  invoiceCheck.addEventListener('change', function () {
+    nipRow.style.display = this.checked ? 'block' : 'none';
+    if (!this.checked) { nipInput.value = ''; clearErr(nipInput, 'err-nip'); }
+  });
+
+  /* ── Signature pad ──────────────────────────────────── */
+  var canvas  = document.getElementById('sigCanvas');
+  var ctx     = canvas.getContext('2d');
+  var sigWrap = document.getElementById('sigWrap');
+  var sigHint = document.getElementById('sigHint');
+  var drawing = false;
+  var hasSig  = false;
+
+  function resizeCanvas() {
+    var w     = sigWrap.offsetWidth;
+    var ratio = window.devicePixelRatio || 1;
+    canvas.width        = w * ratio;
+    canvas.height       = 160 * ratio;
+    canvas.style.width  = w + 'px';
+    canvas.style.height = '160px';
+    ctx.scale(ratio, ratio);
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth   = 2;
+    ctx.lineCap     = 'round';
+    ctx.lineJoin    = 'round';
+    hasSig = false;
+    sigHint.style.display = 'block';
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function getPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var src  = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    drawing = true;
+    var p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    sigHint.style.display = 'none';
+    hasSig = true;
+    clearErr(null, 'err-sig');
+    sigWrap.classList.remove('error');
+  }
+  function draw(e) {
+    if (!drawing) return;
+    var p = getPos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  }
+  function endDraw(e) {
+    if (drawing) { e.preventDefault(); drawing = false; }
+  }
+
+  canvas.addEventListener('mousedown',  startDraw);
+  canvas.addEventListener('mousemove',  draw);
+  canvas.addEventListener('mouseup',    endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove',  function (e) {
+    if (drawing) { e.preventDefault(); }
+    draw(e);
+  }, { passive: false });
+  canvas.addEventListener('touchend', endDraw, { passive: false });
+
+  document.getElementById('btnClear').addEventListener('click', function () {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasSig = false;
+    sigHint.style.display = 'block';
+  });
+
+  /* ── Validation helpers ─────────────────────────────── */
+  function showErr(el, errId, msg) {
+    if (el) el.classList.add('error');
+    var errEl = document.getElementById(errId);
+    if (errEl) { if (msg) errEl.textContent = msg; errEl.style.display = 'block'; }
+  }
+  function clearErr(el, errId) {
+    if (el) el.classList.remove('error');
+    var errEl = document.getElementById(errId);
+    if (errEl) errEl.style.display = 'none';
+  }
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  /* ── Form submit ────────────────────────────────────── */
+  document.getElementById('mainForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var valid = true;
+
+    ['fullName','phone','email','visitDateTime','hours','nip'].forEach(function (id) {
+      clearErr(document.getElementById(id), 'err-' + id);
+    });
+    clearErr(null, 'err-checks');
+    clearErr(null, 'err-sig');
+    sigWrap.classList.remove('error');
+    document.getElementById('wrap-regulamin').classList.remove('error-check');
+    document.getElementById('wrap-monitoring').classList.remove('error-check');
+
+    var fullName      = document.getElementById('fullName').value.trim();
+    var phone         = document.getElementById('phone').value.trim();
+    var email         = document.getElementById('email').value.trim();
+    var address       = document.getElementById('address').value.trim();
+    var visitDateTime = document.getElementById('visitDateTime').value;
+    var hours         = parseInt(hoursInput.value, 10);
+    var idDoc         = document.getElementById('idDoc').value.trim();
+    var nip           = nipInput.value.trim();
+    var invoice       = invoiceCheck.checked;
+    var regCheck      = document.getElementById('acceptedRegulamin').checked;
+    var monCheck      = document.getElementById('acceptedMonitoring').checked;
+
+    if (!fullName) { showErr(document.getElementById('fullName'), 'err-fullName'); valid = false; }
+    if (!phone)    { showErr(document.getElementById('phone'),    'err-phone');    valid = false; }
+    if (!email || !isValidEmail(email)) { showErr(document.getElementById('email'), 'err-email'); valid = false; }
+    if (!visitDateTime) { showErr(document.getElementById('visitDateTime'), 'err-visitDateTime'); valid = false; }
+    if (!hours || hours < 1 || hours > 12) { showErr(hoursInput, 'err-hours'); valid = false; }
+    if (invoice && !nip) { showErr(nipInput, 'err-nip'); valid = false; }
+    if (!regCheck || !monCheck) {
+      document.getElementById('err-checks').style.display = 'block';
+      if (!regCheck) document.getElementById('wrap-regulamin').classList.add('error-check');
+      if (!monCheck) document.getElementById('wrap-monitoring').classList.add('error-check');
+      valid = false;
+    }
+    if (!hasSig) {
+      document.getElementById('err-sig').style.display = 'block';
+      sigWrap.classList.add('error');
+      valid = false;
+    }
+
+    if (!valid) {
+      var firstErr = document.querySelector('.error, .error-check');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    /* Build payload */
+    var amountPLN   = hours * RATE_PER_HOUR;
+    var revolutLink = REVOLUT_BASE + '?currency=PLN&amount=' + (amountPLN * 100);
+    var sigBase64   = canvas.toDataURL('image/png');
+
+    var payload = {
+      fullName:            fullName,
+      phone:               phone,
+      email:               email,
+      address:             address,
+      visitDateTime:       visitDateTime,
+      hours:               hours,
+      idDoc:               idDoc,
+      nip:                 nip,
+      invoiceRequested:    invoice,
+      acceptedRegulamin:   regCheck,
+      acceptedMonitoring:  monCheck,
+      signatureBase64:     sigBase64,
+      calculatedAmountPLN: amountPLN,
+      revolutLink:         revolutLink,
+      payment_status:      PAYMENT_REQUIRED ? 'PENDING' : 'SKIPPED',
+      payment_reference:   ''
+    };
+
+    /* UI: loading */
+    var btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Відправляємо…';
+    hideMessages();
+
+    /* ── fetch() → Apps Script doPost ──────────────────── */
+    fetch(APPS_SCRIPT_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain' }, // text/plain avoids CORS preflight
+      body:    JSON.stringify(payload)
+    })
+    .then(function (response) {
+      if (!response.ok) { throw new Error('HTTP ' + response.status); }
+      return response.json();
+    })
+    .then(function (result) {
+      resetBtn();
+      hideMessages();
+      if (result && result.paymentPending) {
+        showMsg('msg-pending', '⏳ Очікуємо підтвердження оплати. Договір буде надіслано після оплати.');
+      } else {
+        showMsg('msg-success', '✅ Договір відправлено на email: ' + email +
+          (result && result.message ? '\n' + result.message : ''));
+        document.getElementById('mainForm').reset();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        hasSig = false;
+        sigHint.style.display = 'block';
+        nipRow.style.display  = 'none';
+        updatePrice();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(function (err) {
+      resetBtn();
+      showMsg('msg-error', '❌ Помилка: ' + (err && err.message ? err.message : String(err)));
+    });
+  });
+
+  /* ── Helpers ────────────────────────────────────────── */
+  function resetBtn() {
+    var btn = document.getElementById('btnSubmit');
+    btn.disabled  = false;
+    btn.innerHTML = 'Відправити / Zatwierdź';
+  }
+  function hideMessages() {
+    ['msg-success', 'msg-error', 'msg-pending'].forEach(function (id) {
+      document.getElementById(id).style.display = 'none';
+    });
+  }
+  function showMsg(id, text) {
+    var el = document.getElementById(id);
+    el.textContent  = text;
+    el.style.display = 'block';
+  }
+
+})();
+</script>
+</body>
+</html>
