@@ -214,13 +214,6 @@
       transition: opacity 0.2s;
     }
     .pay-btn:active { opacity: 0.8; }
-    .pay-btn.disabled {
-      background: #ccc;
-      color: #666;
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.6;
-    }
     .pay-note {
       font-size: 0.75rem;
       color: var(--muted);
@@ -732,39 +725,63 @@
   updatePrice();
 
   /* ── Payment button validation ──────────────────────── */
-  function validateFormForPayment() {
+  function validateAndShowErrors() {
+    var valid = true;
+
+    // Очищаємо попередні помилки
+    ['fullName','phone','email','visitDateTime','hours','nip'].forEach(function (id) {
+      clearErr(document.getElementById(id), 'err-' + id);
+    });
+    clearErr(null, 'err-checks');
+    clearErr(null, 'err-sig');
+    sigWrap.classList.remove('error');
+    document.getElementById('wrap-regulamin').classList.remove('error-check');
+    document.getElementById('wrap-monitoring').classList.remove('error-check');
+
     var fullName = document.getElementById('fullName').value.trim();
     var phone = document.getElementById('phone').value.trim();
     var email = document.getElementById('email').value.trim();
     var visitDateTime = document.getElementById('visitDateTime').value;
+    var hours = parseInt(hoursInput.value, 10);
     var regCheck = document.getElementById('acceptedRegulamin').checked;
     var monCheck = document.getElementById('acceptedMonitoring').checked;
-    
-    var isValid = fullName && phone && email && visitDateTime && regCheck && monCheck && hasSig;
-    
-    if (isValid) {
-      payLink.classList.remove('disabled');
-    } else {
-      payLink.classList.add('disabled');
+    var invoice = invoiceCheck.checked;
+    var nip = nipInput.value.trim();
+
+    // Валідація
+    if (!fullName) { showErr(document.getElementById('fullName'), 'err-fullName'); valid = false; }
+    if (!phone) { showErr(document.getElementById('phone'), 'err-phone'); valid = false; }
+    if (!email || !isValidEmail(email)) { showErr(document.getElementById('email'), 'err-email'); valid = false; }
+    if (!visitDateTime) { showErr(document.getElementById('visitDateTime'), 'err-visitDateTime'); valid = false; }
+    if (!hours || hours < 1 || hours > 12) { showErr(hoursInput, 'err-hours'); valid = false; }
+    if (invoice && !nip) { showErr(nipInput, 'err-nip'); valid = false; }
+    if (!regCheck || !monCheck) {
+      document.getElementById('err-checks').style.display = 'block';
+      if (!regCheck) document.getElementById('wrap-regulamin').classList.add('error-check');
+      if (!monCheck) document.getElementById('wrap-monitoring').classList.add('error-check');
+      valid = false;
     }
+    if (!hasSig) {
+      document.getElementById('err-sig').style.display = 'block';
+      sigWrap.classList.add('error');
+      valid = false;
+    }
+
+    if (!valid) {
+      // Скролимо до першої помилки
+      var firstErr = document.querySelector('.error, .error-check');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    return valid;
   }
   
-  // Перевіряємо при зміні будь-якого поля
-  document.getElementById('fullName').addEventListener('input', validateFormForPayment);
-  document.getElementById('phone').addEventListener('input', validateFormForPayment);
-  document.getElementById('email').addEventListener('input', validateFormForPayment);
-  document.getElementById('visitDateTime').addEventListener('change', validateFormForPayment);
-  document.getElementById('acceptedRegulamin').addEventListener('change', validateFormForPayment);
-  document.getElementById('acceptedMonitoring').addEventListener('change', validateFormForPayment);
-  
-  // Початкова перевірка
-  validateFormForPayment();
-
-  /* ── Auto-submit after payment ──────────────────────── */
-  // Відстежуємо клік на кнопку оплати
+  // Обробник кліку на кнопку оплати
   payLink.addEventListener('click', function(e) {
-    if (!payLink.classList.contains('disabled')) {
-      // Зберігаємо прапорець що користувач пішов на оплату
+    e.preventDefault();
+    
+    if (validateAndShowErrors()) {
+      // Якщо всі поля заповнені — зберігаємо дані і відкриваємо Revolut
       localStorage.setItem('salon_she_payment_pending', 'true');
       localStorage.setItem('salon_she_form_data', JSON.stringify({
         fullName: document.getElementById('fullName').value,
@@ -780,9 +797,13 @@
         acceptedMonitoring: document.getElementById('acceptedMonitoring').checked,
         signatureBase64: canvas.toDataURL('image/png')
       }));
+      
+      // Відкриваємо Revolut
+      window.open(payLink.href, '_blank');
     }
   });
 
+  /* ── Auto-submit after payment ──────────────────────── */
   // Перевіряємо чи користувач повернувся після оплати
   window.addEventListener('focus', function() {
     if (localStorage.getItem('salon_she_payment_pending') === 'true') {
