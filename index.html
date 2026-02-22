@@ -668,12 +668,24 @@
     var revolutLink = REVOLUT_BASE + '?currency=PLN&amount=' + (amountPLN * 100);
     var sigBase64   = canvas.toDataURL('image/png');
 
+    // Format visitDateTime to DD.MM.YYYY HH:mm
+    var visitFormatted = visitDateTime;
+    if (visitDateTime) {
+      var dt = new Date(visitDateTime);
+      var dd = ('0' + dt.getDate()).slice(-2);
+      var mm = ('0' + (dt.getMonth() + 1)).slice(-2);
+      var yyyy = dt.getFullYear();
+      var hh = ('0' + dt.getHours()).slice(-2);
+      var min = ('0' + dt.getMinutes()).slice(-2);
+      visitFormatted = dd + '.' + mm + '.' + yyyy + ' ' + hh + ':' + min;
+    }
+
     var payload = {
       fullName:            fullName,
       phone:               phone,
       email:               email,
       address:             address,
-      visitDateTime:       visitDateTime,
+      visitDateTime:       visitFormatted,
       hours:               hours,
       idDoc:               idDoc,
       nip:                 nip,

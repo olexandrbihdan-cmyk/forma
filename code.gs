@@ -13,6 +13,9 @@ var SHEET_NAME   = 'HourlyAccess';                                    // Наз�
 // ── Платіжний режим ──────────────────────────────────────────────
 var PAYMENT_REQUIRED = false; // true → генерувати PDF тільки після PAID
 
+// ── Webhook ──────────────────────────────────────────────────────
+var WEBHOOK_URL = 'https://hook.eu2.make.com/zq6sa5q4d8h4kyxvd4yhxy2latdblu9p'; // ← вставте сюди URL вашого вебхуку
+
 // ── Колонки Sheet ────────────────────────────────────────────────
 var SHEET_HEADERS = [
   'timestamp', 'fullName', 'phone', 'email', 'address',
@@ -97,6 +100,9 @@ function submitForm(payload) {
   updateCell(sheet, rowIndex, 'pdfFileId',       pdfFileId);
   updateCell(sheet, rowIndex, 'statusEmailSent', emailSent ? 'TRUE' : 'FALSE');
   updateCell(sheet, rowIndex, 'errorMessage',    errorMessage);
+
+  // 5. Webhook
+  sendWebhook(payload, pdfFileId, emailSent);
 
   return {
     ok:      true,
@@ -303,6 +309,81 @@ function updateCell(sheet, rowIndex, colName, value) {
   var colIndex = SHEET_HEADERS.indexOf(colName) + 1;
   if (colIndex > 0) {
     sheet.getRange(rowIndex, colIndex).setValue(value);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Webhook — відправка після успішного сабміту
+// ════════════════════════════════════════════════════════════════
+function sendWebhook(payload, pdfFileId, emailSent) {
+  if (!WEBHOOK_URL || WEBHOOK_URL.length === 0) {
+    Logger.log('⚠️ Webhook: WEBHOOK_URL не вказано, пропускаємо');
+    return;
+  }
+
+  Logger.log('📤 Webhook: Починаємо відправку на ' + WEBHOOK_URL);
+
+  var body = {
+    event:             'form_submitted',
+    timestamp:         new Date().toISOString(),
+    pdfFileId:         pdfFileId,
+    emailSent:         emailSent,
+    fullName:          payload.fullName          || '',
+    phone:             payload.phone             || '',
+    email:             payload.email             || '',
+    address:           payload.address           || '',
+    visitDateTime:     payload.visitDateTime      || '',
+    hours:             payload.hours             || 0,
+    calculatedAmountPLN: payload.calculatedAmountPLN || 0,
+    revolutLink:       payload.revolutLink        || '',
+    idDoc:             payload.idDoc             || '',
+    nip:               payload.nip               || '',
+    invoiceRequested:  payload.invoiceRequested   || false,
+    acceptedRegulamin: payload.acceptedRegulamin  || false,
+    acceptedMonitoring:payload.acceptedMonitoring || false,
+    payment_status:    payload.payment_status     || '',
+    payment_reference: payload.payment_reference  || ''
+  };
+
+  Logger.log('📦 Webhook payload: ' + JSON.stringify(body).substring(0, 200) + '...');
+
+  try {
+    var response = UrlFetchApp.fetch(WEBHOOK_URL, {
+      method:             'post',
+      contentType:        'application/json',
+      payload:            JSON.stringify(body),
+      muteHttpExceptions: true
+    });
+
+    var statusCode = response.getResponseCode();
+    var responseText = response.getContentText();
+
+    Logger.log('✅ Webhook відправлено! HTTP ' + statusCode);
+    Logger.log('📥 Webhook response: ' + responseText.substring(0, 500));
+
+    if (statusCode < 200 || statusCode >= 300) {
+      Logger.log('⚠️ Webhook: Нестандартний статус код ' + statusCode);
+    }
+
+  } catch (err) {
+    Logger.log('❌ Webhook error: ' + err.toString());
+    Logger.log('Stack: ' + err.stack);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+//  Авторизація UrlFetchApp (запустіть вручну один раз)
+// ════════════════════════════════════════════════════════════════
+function authorizeUrlFetch() {
+  // Ця функція викликає діалог авторизації для UrlFetchApp
+  try {
+    var response = UrlFetchApp.fetch('https://www.google.com', {
+      muteHttpExceptions: true
+    });
+    Logger.log('✅ Авторизація успішна! HTTP ' + response.getResponseCode());
+    Logger.log('Тепер можете запускати testWebhook() або робити Deploy');
+  } catch (err) {
+    Logger.log('❌ Помилка авторизації: ' + err.toString());
   }
 }
 
