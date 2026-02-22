@@ -148,16 +148,31 @@ function generateAndSendPdf(payload) {
   var textMap = {
     '{{nazwa}}':    payload.fullName   || '',
     '{{adres}}':    payload.address    || '',
-    '{{dokument}}': payload.idDoc      || '',
     '{{Email}}':    payload.email      || '',
-    '{{nip}}':      payload.nip        || '',
     '{{telefon}}':  payload.phone      || '',
     '{{data}}':     Utilities.formatDate(new Date(), 'GMT+2', 'dd.MM.yyyy'),
     '{{dataWizyty}}': visitFormatted,
     '{{godziny}}':  String(payload.hours || ''),
-    '{{kwota}}':    String(payload.calculatedAmountPLN || '') + ' PLN',
-    '{{pesel}}':    ''
+    '{{kwota}}':    String(payload.calculatedAmountPLN || '') + ' PLN'
   };
+
+  // Умовні поля — видаляємо весь рядок якщо порожнє
+  // idDoc тепер включає PESEL, використовуємо {{pesel}} в шаблоні
+  if (payload.idDoc && payload.idDoc.trim()) {
+    textMap['{{pesel}}'] = payload.idDoc;
+  } else {
+    // Видаляємо весь рядок "Numer dokumentu tożsamości (lub PESEL): {{pesel}}"
+    body.replaceText('Numer dokumentu tożsamości.*{{pesel}}', '');
+    body.replaceText('{{pesel}}', ''); // fallback якщо без label
+  }
+
+  if (payload.nip && payload.nip.trim()) {
+    textMap['{{nip}}'] = payload.nip;
+  } else {
+    // Видаляємо весь рядок "NIP: {{nip}}"
+    body.replaceText('NIP:\\s*{{nip}}', '');
+    body.replaceText('{{nip}}', ''); // fallback
+  }
 
   for (var tag in textMap) {
     body.replaceText(tag, textMap[tag]);
