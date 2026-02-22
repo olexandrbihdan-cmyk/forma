@@ -417,37 +417,7 @@
       </div>
     </div>
 
-    <!-- Visit details -->
-    <div class="card">
-      <div class="section-title" data-i18n="section_visit">Деталі візиту</div>
-
-      <div class="field">
-        <label for="visitDateTime"><span data-i18n="label_datetime">Дата і час візиту</span> <span class="req">*</span></label>
-        <input type="datetime-local" id="visitDateTime" name="visitDateTime" required>
-        <div class="field-error" id="err-visitDateTime" data-i18n="error_datetime">Оберіть дату і час</div>
-      </div>
-
-      <div class="field">
-        <label for="hours"><span data-i18n="label_hours">Кількість годин</span> <span class="req">*</span></label>
-        <div class="stepper">
-          <button type="button" id="btn-minus" data-i18n-aria="aria_decrease" aria-label="Зменшити">−</button>
-          <input type="number" id="hours" name="hours" value="1" min="1" max="12" readonly>
-          <button type="button" id="btn-plus" data-i18n-aria="aria_increase" aria-label="Збільшити">+</button>
-        </div>
-        <div class="field-error" id="err-hours" data-i18n="error_hours">Оберіть кількість годин (1–12)</div>
-      </div>
-    </div>
-
-    <!-- Price block -->
-    <div class="price-block">
-      <div class="price-label" data-i18n="price_label">Do zapłaty</div>
-      <div class="price-amount" id="priceDisplay">30 <span>PLN</span></div>
-      <a id="payLink" href="#" target="_blank" rel="noopener noreferrer" class="pay-btn">
-        <span data-i18n="btn_pay">💳 Оплатити</span>
-      </a>
-    </div>
-
-    <!-- Documents -->
+        <!-- Documents -->
     <div class="card">
       <div class="section-title" data-i18n="section_documents">Документи</div>
 
@@ -511,6 +481,37 @@
         <button type="button" class="btn-clear" id="btnClear" data-i18n="btn_clear">Очистити підпис</button>
       </div>
     </div>
+
+    <!-- Visit details -->
+    <div class="card">
+      <div class="section-title" data-i18n="section_visit">Деталі візиту</div>
+
+      <div class="field">
+        <label for="visitDateTime"><span data-i18n="label_datetime">Дата і час візиту</span> <span class="req">*</span></label>
+        <input type="datetime-local" id="visitDateTime" name="visitDateTime" required>
+        <div class="field-error" id="err-visitDateTime" data-i18n="error_datetime">Оберіть дату і час</div>
+      </div>
+
+      <div class="field">
+        <label for="hours"><span data-i18n="label_hours">Кількість годин</span> <span class="req">*</span></label>
+        <div class="stepper">
+          <button type="button" id="btn-minus" data-i18n-aria="aria_decrease" aria-label="Зменшити">−</button>
+          <input type="number" id="hours" name="hours" value="1" min="1" max="12" readonly>
+          <button type="button" id="btn-plus" data-i18n-aria="aria_increase" aria-label="Збільшити">+</button>
+        </div>
+        <div class="field-error" id="err-hours" data-i18n="error_hours">Оберіть кількість годин (1–12)</div>
+      </div>
+    </div>
+
+    <!-- Price block -->
+    <div class="price-block">
+      <div class="price-label" data-i18n="price_label">Do zapłaty</div>
+      <div class="price-amount" id="priceDisplay">30 <span>PLN</span></div>
+      <a id="payLink" href="#" target="_blank" rel="noopener noreferrer" class="pay-btn">
+        <span data-i18n="btn_pay">💳 Оплатити</span>
+      </a>
+    </div>
+
 
     <!-- Submit -->
     <button type="submit" class="btn-submit" id="btnSubmit" data-i18n="btn_submit">
