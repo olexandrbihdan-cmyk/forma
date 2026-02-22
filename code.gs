@@ -323,10 +323,20 @@ function sendWebhook(payload, pdfFileId, emailSent) {
 
   Logger.log('📤 Webhook: Починаємо відправку на ' + WEBHOOK_URL);
 
+  // Генеруємо URL до PDF файлу
+  var pdfUrl = '';
+  var pdfDownloadUrl = '';
+  if (pdfFileId) {
+    pdfUrl = 'https://drive.google.com/file/d/' + pdfFileId + '/view';
+    pdfDownloadUrl = 'https://drive.google.com/uc?export=download&id=' + pdfFileId;
+  }
+
   var body = {
     event:             'form_submitted',
     timestamp:         new Date().toISOString(),
     pdfFileId:         pdfFileId,
+    pdfUrl:            pdfUrl,
+    pdfDownloadUrl:    pdfDownloadUrl,
     emailSent:         emailSent,
     fullName:          payload.fullName          || '',
     phone:             payload.phone             || '',

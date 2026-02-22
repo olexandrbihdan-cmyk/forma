@@ -38,6 +38,33 @@
       padding: 16px 16px 40px;
     }
 
+    .lang-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .lang-btn {
+      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      background: var(--card);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .lang-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
     .header {
       text-align: center;
       padding: 24px 0 20px;
@@ -343,9 +370,16 @@
 <body>
 <div class="container">
 
+  <!-- Language Switcher -->
+  <div class="lang-switcher">
+    <button type="button" class="lang-btn active" data-lang="ukr">🇺🇦 UKR</button>
+    <button type="button" class="lang-btn" data-lang="pol">🇵🇱 POL</button>
+    <button type="button" class="lang-btn" data-lang="eng">🇬🇧 ENG</button>
+  </div>
+
   <div class="header">
-    <h1>Salon SHE</h1>
-    <p>Реєстрація доступу до локалу</p>
+    <h1 data-i18n="title">Salon SHE</h1>
+    <p data-i18n="subtitle">Реєстрація доступу до локалу</p>
   </div>
 
   <!-- Status messages -->
@@ -357,93 +391,93 @@
 
     <!-- Personal data -->
     <div class="card">
-      <div class="section-title">Особисті дані</div>
+      <div class="section-title" data-i18n="section_personal">Особисті дані</div>
 
       <div class="field">
-        <label for="fullName">Ім'я та прізвище <span class="req">*</span></label>
-        <input type="text" id="fullName" name="fullName" placeholder="Ім'я Прізвище" autocomplete="name" required>
-        <div class="field-error" id="err-fullName">Введіть ім'я та прізвище</div>
+        <label for="fullName"><span data-i18n="label_fullname">Ім'я та прізвище</span> <span class="req">*</span></label>
+        <input type="text" id="fullName" name="fullName" data-i18n-placeholder="placeholder_fullname" placeholder="Ім'я Прізвище" autocomplete="name" required>
+        <div class="field-error" id="err-fullName" data-i18n="error_fullname">Введіть ім'я та прізвище</div>
       </div>
 
       <div class="field">
-        <label for="phone">Номер телефону <span class="req">*</span></label>
+        <label for="phone"><span data-i18n="label_phone">Номер телефону</span> <span class="req">*</span></label>
         <input type="tel" id="phone" name="phone" placeholder="+48 000 000 000" autocomplete="tel" required>
-        <div class="field-error" id="err-phone">Введіть номер телефону</div>
+        <div class="field-error" id="err-phone" data-i18n="error_phone">Введіть номер телефону</div>
       </div>
 
       <div class="field">
-        <label for="email">Email <span class="req">*</span></label>
+        <label for="email"><span data-i18n="label_email">Email</span> <span class="req">*</span></label>
         <input type="email" id="email" name="email" placeholder="your@email.com" autocomplete="email" required>
-        <div class="field-error" id="err-email">Введіть коректний email</div>
+        <div class="field-error" id="err-email" data-i18n="error_email">Введіть коректний email</div>
       </div>
 
       <div class="field">
-        <label for="address">Адреса <span style="color:var(--muted);font-weight:400">(необов'язково)</span></label>
-        <input type="text" id="address" name="address" placeholder="Вулиця, місто" autocomplete="street-address">
+        <label for="address"><span data-i18n="label_address">Адреса</span> <span style="color:var(--muted);font-weight:400" data-i18n="optional">(необов'язково)</span></label>
+        <input type="text" id="address" name="address" data-i18n-placeholder="placeholder_address" placeholder="Вулиця, місто" autocomplete="street-address">
       </div>
     </div>
 
     <!-- Visit details -->
     <div class="card">
-      <div class="section-title">Деталі візиту</div>
+      <div class="section-title" data-i18n="section_visit">Деталі візиту</div>
 
       <div class="field">
-        <label for="visitDateTime">Дата і час візиту <span class="req">*</span></label>
+        <label for="visitDateTime"><span data-i18n="label_datetime">Дата і час візиту</span> <span class="req">*</span></label>
         <input type="datetime-local" id="visitDateTime" name="visitDateTime" required>
-        <div class="field-error" id="err-visitDateTime">Оберіть дату і час</div>
+        <div class="field-error" id="err-visitDateTime" data-i18n="error_datetime">Оберіть дату і час</div>
       </div>
 
       <div class="field">
-        <label for="hours">Кількість годин <span class="req">*</span></label>
+        <label for="hours"><span data-i18n="label_hours">Кількість годин</span> <span class="req">*</span></label>
         <div class="stepper">
-          <button type="button" id="btn-minus" aria-label="Зменшити">−</button>
+          <button type="button" id="btn-minus" data-i18n-aria="aria_decrease" aria-label="Зменшити">−</button>
           <input type="number" id="hours" name="hours" value="1" min="1" max="12" readonly>
-          <button type="button" id="btn-plus" aria-label="Збільшити">+</button>
+          <button type="button" id="btn-plus" data-i18n-aria="aria_increase" aria-label="Збільшити">+</button>
         </div>
-        <div class="field-error" id="err-hours">Оберіть кількість годин (1–12)</div>
+        <div class="field-error" id="err-hours" data-i18n="error_hours">Оберіть кількість годин (1–12)</div>
       </div>
     </div>
 
     <!-- Price block -->
     <div class="price-block">
-      <div class="price-label">Do zapłaty</div>
+      <div class="price-label" data-i18n="price_label">Do zapłaty</div>
       <div class="price-amount" id="priceDisplay">30 <span>PLN</span></div>
       <a id="payLink" href="#" target="_blank" rel="noopener noreferrer" class="pay-btn">
-        💳 Оплатити
+        <span data-i18n="btn_pay">💳 Оплатити</span>
       </a>
     </div>
 
     <!-- Documents -->
     <div class="card">
-      <div class="section-title">Документи</div>
+      <div class="section-title" data-i18n="section_documents">Документи</div>
 
       <div class="field">
-        <label for="idDoc">Номер документу <span style="color:var(--muted);font-weight:400">(необов'язково)</span></label>
-        <input type="text" id="idDoc" name="idDoc" placeholder="Серія та номер">
+        <label for="idDoc"><span data-i18n="label_iddoc">Номер документу</span> <span style="color:var(--muted);font-weight:400" data-i18n="optional">(необов'язково)</span></label>
+        <input type="text" id="idDoc" name="idDoc" data-i18n-placeholder="placeholder_iddoc" placeholder="Серія та номер">
       </div>
 
       <div class="field">
         <div class="check-field" style="margin-bottom:10px">
           <input type="checkbox" id="invoiceRequested" name="invoiceRequested">
-          <label for="invoiceRequested">Потрібна фактура (faktura VAT)</label>
+          <label for="invoiceRequested" data-i18n="label_invoice">Потрібна фактура (faktura VAT)</label>
         </div>
       </div>
 
       <div class="field" id="nip-row">
         <label for="nip">NIP <span class="req">*</span></label>
         <input type="text" id="nip" name="nip" placeholder="000-000-00-00">
-        <div class="field-error" id="err-nip">NIP обов'язковий при запиті фактури</div>
+        <div class="field-error" id="err-nip" data-i18n="error_nip">NIP обов'язковий при запиті фактури</div>
       </div>
     </div>
 
     <!-- Agreements -->
     <div class="card">
-      <div class="section-title">Згоди</div>
+      <div class="section-title" data-i18n="section_agreements">Згоди</div>
 
       <div class="check-field" id="wrap-regulamin">
         <input type="checkbox" id="acceptedRegulamin" name="acceptedRegulamin" required>
         <label for="acceptedRegulamin">
-          Я ознайомився/ознайомилась і приймаю
+          <span data-i18n="label_regulamin">Я ознайомився/ознайомилась і приймаю</span>
           <a href="https://docs.google.com/document/d/1MCnRjH4PRL5NJkY6aZT0Nzeu8eBb2vVBOlFkzqlPT9M/edit?tab=t.0#heading=h.p4g7v9uedlgh"
              target="_blank" rel="noopener noreferrer">REGULAMIN</a>
           <span class="req">*</span>
@@ -453,31 +487,31 @@
       <div class="check-field" id="wrap-monitoring" style="margin-top:12px">
         <input type="checkbox" id="acceptedMonitoring" name="acceptedMonitoring" required>
         <label for="acceptedMonitoring">
-          Підтверджую, що локал знаходиться під відеоспостереженням (крім туалету) і я погоджуюсь
+          <span data-i18n="label_monitoring">Підтверджую, що локал знаходиться під відеоспостереженням (крім туалету) і я погоджуюсь</span>
           <span class="req">*</span>
         </label>
       </div>
 
-      <div class="field-error" id="err-checks" style="display:none;margin-top:8px">
+      <div class="field-error" id="err-checks" style="display:none;margin-top:8px" data-i18n="error_checks">
         Необхідно прийняти обидві згоди
       </div>
     </div>
 
     <!-- Signature -->
     <div class="card">
-      <div class="section-title">Підпис</div>
+      <div class="section-title" data-i18n="section_signature">Підпис</div>
       <div class="sig-wrap" id="sigWrap">
         <canvas id="sigCanvas" height="160"></canvas>
-        <div class="sig-hint" id="sigHint">Підпишіть тут пальцем</div>
+        <div class="sig-hint" id="sigHint" data-i18n="sig_hint">Підпишіть тут пальцем</div>
       </div>
-      <div class="field-error" id="err-sig" style="margin-top:6px">Підпис обов'язковий</div>
+      <div class="field-error" id="err-sig" style="margin-top:6px" data-i18n="error_signature">Підпис обов'язковий</div>
       <div class="sig-actions">
-        <button type="button" class="btn-clear" id="btnClear">Очистити підпис</button>
+        <button type="button" class="btn-clear" id="btnClear" data-i18n="btn_clear">Очистити підпис</button>
       </div>
     </div>
 
     <!-- Submit -->
-    <button type="submit" class="btn-submit" id="btnSubmit">
+    <button type="submit" class="btn-submit" id="btnSubmit" data-i18n="btn_submit">
       Відправити / Zatwierdź
     </button>
 
@@ -495,6 +529,171 @@
   var RATE_PER_HOUR    = 30;
   var REVOLUT_BASE     = 'https://revolut.me/bynya94';
   var PAYMENT_REQUIRED = false; // flip to true when live
+
+  /* ── Translations ──────────────────────────────────── */
+  var translations = {
+    ukr: {
+      title: 'Salon SHE',
+      subtitle: 'Реєстрація доступу до локалу',
+      section_personal: 'Особисті дані',
+      label_fullname: 'Ім\'я та прізвище',
+      placeholder_fullname: 'Ім\'я Прізвище',
+      error_fullname: 'Введіть ім\'я та прізвище',
+      label_phone: 'Номер телефону',
+      error_phone: 'Введіть номер телефону',
+      label_email: 'Email',
+      error_email: 'Введіть коректний email',
+      label_address: 'Адреса',
+      optional: '(необов\'язково)',
+      placeholder_address: 'Вулиця, місто',
+      section_visit: 'Деталі візиту',
+      label_datetime: 'Дата і час візиту',
+      error_datetime: 'Оберіть дату і час',
+      label_hours: 'Кількість годин',
+      aria_decrease: 'Зменшити',
+      aria_increase: 'Збільшити',
+      error_hours: 'Оберіть кількість годин (1–12)',
+      price_label: 'До сплати',
+      btn_pay: '💳 Оплатити',
+      section_documents: 'Документи',
+      label_iddoc: 'Номер документу',
+      placeholder_iddoc: 'Серія та номер',
+      label_invoice: 'Потрібна фактура (faktura VAT)',
+      error_nip: 'NIP обов\'язковий при запиті фактури',
+      section_agreements: 'Згоди',
+      label_regulamin: 'Я ознайомився/ознайомилась і приймаю',
+      label_monitoring: 'Підтверджую, що локал знаходиться під відеоспостереженням (крім туалету) і я погоджуюсь',
+      error_checks: 'Необхідно прийняти обидві згоди',
+      section_signature: 'Підпис',
+      sig_hint: 'Підпишіть тут пальцем',
+      error_signature: 'Підпис обов\'язковий',
+      btn_clear: 'Очистити підпис',
+      btn_submit: 'Відправити'
+    },
+    pol: {
+      title: 'Salon SHE',
+      subtitle: 'Rejestracja dostępu do lokalu',
+      section_personal: 'Dane osobowe',
+      label_fullname: 'Imię i nazwisko',
+      placeholder_fullname: 'Imię Nazwisko',
+      error_fullname: 'Wprowadź imię i nazwisko',
+      label_phone: 'Numer telefonu',
+      error_phone: 'Wprowadź numer telefonu',
+      label_email: 'Email',
+      error_email: 'Wprowadź poprawny email',
+      label_address: 'Adres',
+      optional: '(opcjonalnie)',
+      placeholder_address: 'Ulica, miasto',
+      section_visit: 'Szczegóły wizyty',
+      label_datetime: 'Data i godzina wizyty',
+      error_datetime: 'Wybierz datę i godzinę',
+      label_hours: 'Liczba godzin',
+      aria_decrease: 'Zmniejsz',
+      aria_increase: 'Zwiększ',
+      error_hours: 'Wybierz liczbę godzin (1–12)',
+      price_label: 'Do zapłaty',
+      btn_pay: '💳 Zapłać',
+      section_documents: 'Dokumenty',
+      label_iddoc: 'Numer dokumentu',
+      placeholder_iddoc: 'Seria i numer',
+      label_invoice: 'Potrzebuję faktury (faktura VAT)',
+      error_nip: 'NIP wymagany przy żądaniu faktury',
+      section_agreements: 'Zgody',
+      label_regulamin: 'Zapoznałem/Zapoznałam się i akceptuję',
+      label_monitoring: 'Potwierdzam, że lokal jest pod monitoringiem (z wyjątkiem toalety) i zgadzam się',
+      error_checks: 'Należy zaakceptować obie zgody',
+      section_signature: 'Podpis',
+      sig_hint: 'Podpisz tutaj palcem',
+      error_signature: 'Podpis wymagany',
+      btn_clear: 'Wyczyść podpis',
+      btn_submit: 'Zatwierdź'
+    },
+    eng: {
+      title: 'Salon SHE',
+      subtitle: 'Location access registration',
+      section_personal: 'Personal data',
+      label_fullname: 'Full name',
+      placeholder_fullname: 'First Last',
+      error_fullname: 'Enter your full name',
+      label_phone: 'Phone number',
+      error_phone: 'Enter phone number',
+      label_email: 'Email',
+      error_email: 'Enter valid email',
+      label_address: 'Address',
+      optional: '(optional)',
+      placeholder_address: 'Street, city',
+      section_visit: 'Visit details',
+      label_datetime: 'Visit date and time',
+      error_datetime: 'Select date and time',
+      label_hours: 'Number of hours',
+      aria_decrease: 'Decrease',
+      aria_increase: 'Increase',
+      error_hours: 'Select number of hours (1–12)',
+      price_label: 'To pay',
+      btn_pay: '💳 Pay',
+      section_documents: 'Documents',
+      label_iddoc: 'Document number',
+      placeholder_iddoc: 'Series and number',
+      label_invoice: 'I need an invoice (faktura VAT)',
+      error_nip: 'NIP required when requesting invoice',
+      section_agreements: 'Agreements',
+      label_regulamin: 'I have read and accept',
+      label_monitoring: 'I confirm that the location is under video surveillance (except toilet) and I agree',
+      error_checks: 'Both consents must be accepted',
+      section_signature: 'Signature',
+      sig_hint: 'Sign here with your finger',
+      error_signature: 'Signature required',
+      btn_clear: 'Clear signature',
+      btn_submit: 'Submit'
+    }
+  };
+
+  var currentLang = 'ukr';
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    var t = translations[lang];
+    
+    // Update all elements with data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (t[key]) el.textContent = t[key];
+    });
+    
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      if (t[key]) el.placeholder = t[key];
+    });
+    
+    // Update aria-labels
+    document.querySelectorAll('[data-i18n-aria]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-aria');
+      if (t[key]) el.setAttribute('aria-label', t[key]);
+    });
+    
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+      if (btn.getAttribute('data-lang') === lang) {
+        btn.classList.add('active');
+      }
+    });
+    
+    // Save to localStorage
+    localStorage.setItem('salon_she_lang', lang);
+  }
+
+  // Language switcher
+  document.querySelectorAll('.lang-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setLanguage(this.getAttribute('data-lang'));
+    });
+  });
+
+  // Load saved language or default to ukr
+  var savedLang = localStorage.getItem('salon_she_lang') || 'ukr';
+  setLanguage(savedLang);
 
   /* ── Price & Revolut link ───────────────────────────── */
   var hoursInput   = document.getElementById('hours');
@@ -537,6 +736,9 @@
   var hasSig  = false;
 
   function resizeCanvas() {
+    // Зберігаємо підпис перед resize
+    var imgData = hasSig ? canvas.toDataURL() : null;
+    
     var w     = sigWrap.offsetWidth;
     var ratio = window.devicePixelRatio || 1;
     canvas.width        = w * ratio;
@@ -548,11 +750,27 @@
     ctx.lineWidth   = 2;
     ctx.lineCap     = 'round';
     ctx.lineJoin    = 'round';
-    hasSig = false;
-    sigHint.style.display = 'block';
+    
+    // Відновлюємо підпис після resize
+    if (imgData) {
+      var img = new Image();
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, w, 160);
+      };
+      img.src = imgData;
+    } else {
+      hasSig = false;
+      sigHint.style.display = 'block';
+    }
   }
   resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+  
+  // Debounce resize щоб не викликати занадто часто
+  var resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(resizeCanvas, 100);
+  });
 
   function getPos(e) {
     var rect = canvas.getBoundingClientRect();
