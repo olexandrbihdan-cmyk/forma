@@ -496,7 +496,7 @@
         <label for="hours"><span data-i18n="label_hours">Кількість годин</span> <span class="req">*</span></label>
         <div class="stepper">
           <button type="button" id="btn-minus" data-i18n-aria="aria_decrease" aria-label="Зменшити">−</button>
-          <input type="number" id="hours" name="hours" value="1" min="1" max="12" readonly>
+          <input type="number" id="hours" name="hours" value="1" min="1" max="12" step="0.5" readonly>
           <button type="button" id="btn-plus" data-i18n-aria="aria_increase" aria-label="Збільшити">+</button>
         </div>
         <div class="field-error" id="err-hours" data-i18n="error_hours">Оберіть кількість годин (1–12)</div>
@@ -707,20 +707,22 @@
   var payLink      = document.getElementById('payLink');
 
   function updatePrice() {
-    var h     = parseInt(hoursInput.value, 10) || 1;
+    var h     = parseFloat(hoursInput.value) || 1;
     var total = h * RATE_PER_HOUR;
+    // Жорстке обмеження на 250 PLN
+    if (total > 250) total = 250;
     priceDisplay.innerHTML = total + ' <span>PLN</span>';
     var revolutUrl = REVOLUT_BASE + '?currency=PLN&amount=' + (total * 100);
     payLink.href = revolutUrl;
   }
 
   document.getElementById('btn-minus').addEventListener('click', function () {
-    var v = parseInt(hoursInput.value, 10);
-    if (v > 1) { hoursInput.value = v - 1; updatePrice(); }
+    var v = parseFloat(hoursInput.value);
+    if (v > 1) { hoursInput.value = (v - 0.5).toFixed(1); updatePrice(); }
   });
   document.getElementById('btn-plus').addEventListener('click', function () {
-    var v = parseInt(hoursInput.value, 10);
-    if (v < 12) { hoursInput.value = v + 1; updatePrice(); }
+    var v = parseFloat(hoursInput.value);
+    if (v < 12) { hoursInput.value = (v + 0.5).toFixed(1); updatePrice(); }
   });
   updatePrice();
 
@@ -742,7 +744,7 @@
     var phone = document.getElementById('phone').value.trim();
     var email = document.getElementById('email').value.trim();
     var visitDateTime = document.getElementById('visitDateTime').value;
-    var hours = parseInt(hoursInput.value, 10);
+    var hours = parseFloat(hoursInput.value);
     var regCheck = document.getElementById('acceptedRegulamin').checked;
     var monCheck = document.getElementById('acceptedMonitoring').checked;
     var invoice = invoiceCheck.checked;
@@ -956,7 +958,7 @@
     var email         = document.getElementById('email').value.trim();
     var address       = document.getElementById('address').value.trim();
     var visitDateTime = document.getElementById('visitDateTime').value;
-    var hours         = parseInt(hoursInput.value, 10);
+    var hours         = parseFloat(hoursInput.value);
     var idDoc         = document.getElementById('idDoc').value.trim();
     var nip           = nipInput.value.trim();
     var invoice       = invoiceCheck.checked;
@@ -989,6 +991,8 @@
 
     /* Build payload */
     var amountPLN   = hours * RATE_PER_HOUR;
+    // Жорстке обмеження на 250 PLN
+    if (amountPLN > 250) amountPLN = 250;
     var revolutLink = REVOLUT_BASE + '?currency=PLN&amount=' + (amountPLN * 100);
     var sigBase64   = canvas.toDataURL('image/png');
 
